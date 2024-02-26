@@ -1,0 +1,6 @@
+DATABASE_URI = 'postgresql://localhost/notes'
+DB_USERNAME='test'
+DB_PASSWORD='test'
+DB_NAME=notes
+DB_HOST=127.0.0.1
+NODE_ENV=development
