@@ -7,6 +7,7 @@ export class RegisterUser {
   constructor (private readonly userRepository: UserRepository, private readonly passwordHelper: PasswordHelper) {}
 
   public async execute (username: string, email: string, password: string): Promise<User> {
+    try {
     const user = await this.userRepository.findByEmail(email)
     if (user != null) {
       throw new UserAlreadyExists()
@@ -16,5 +17,8 @@ export class RegisterUser {
     const newUser = User.create(username, email, password)
 
     return await this.userRepository.create(newUser)
+  } catch (error) {
+    throw error
   }
+}
 }

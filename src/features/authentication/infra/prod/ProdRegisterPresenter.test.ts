@@ -33,4 +33,3 @@ describe('ProdRegisterPresenter', () => {
     expect(result.user).toBeUndefined()
   })
 })
-

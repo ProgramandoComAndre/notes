@@ -59,5 +59,14 @@ describe('RegisterUser', () => {
 
     expect(registerUser.execute('', userDto.email, userDto.password)).rejects.toThrow(Error)
   })
+
+  it('should throw an error if it have a unknown error for example with a database error', async () => {
+    const userDto = makeDto()
+    const userRepository = new MockUserRepository()
+    const passwordHelper = new MockPasswordHelper()
+    const registerUser = new RegisterUser(userRepository, passwordHelper)
+    userRepository.findByEmail = jest.fn().mockRejectedValue(new Error('Could not connect to database'))
+    await expect(registerUser.execute(userDto.username, userDto.email, userDto.password)).rejects.toThrow('Could not connect to database')
+  })
   
 })
