@@ -1,12 +1,13 @@
 import { InvalidCredentialsError } from '../../common/errors/InvalidCredentialsError'
-import User from '../entities/User'
+import User, { TokenClaims } from '../entities/User'
 import { type UserRepository } from '../interfaces/repositories/UserRepository'
 import { type PasswordHelper } from '../interfaces/security/PasswordHelper'
-import { type AuthenticatedUser } from '../value-objects/AuthenticatedUser'
-export class Login {
-  constructor (private readonly userRepository: UserRepository, private readonly passwordHelper: PasswordHelper) {}
+import { ITokenStrategy, TokenStrategy } from '../interfaces/strategy/TokenStrategy'
 
-  public async execute (email: string, password: string): Promise<AuthenticatedUser> {
+export class Login {
+  constructor (private readonly userRepository: UserRepository, private readonly passwordHelper: PasswordHelper, private readonly tokenStrategy: ITokenStrategy) {}
+
+  public async execute (email: string, password: string): Promise<any> {
     try {
       const user = await this.userRepository.findByEmail(email)
       if (user == null) {
@@ -17,7 +18,11 @@ export class Login {
       if (!isPasswordValid) {
         throw new InvalidCredentialsError()
       }
-      return { id: user.id, email: user.email }
+      const claims = user?.generateTokenClaims()
+
+      const token = this.tokenStrategy.buildToken(claims)
+      return token
+
     } catch (error) {
       throw error
     }

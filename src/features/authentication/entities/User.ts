@@ -1,13 +1,22 @@
 import { InvalidSchemaError } from '../../common/errors/InvalidSchemaError'
 import { UserSchema } from './User.schema'
 import { v4 as uuidv4 } from 'uuid'
+
+export interface TokenClaims {
+   id: any,
+   email: any
+}
+
 export default class User {
   constructor (public readonly id: any, public username: string, public email: string, public password: string) {
   }
 
+  public generateTokenClaims() : TokenClaims {
+    return { id: this.id, email: this.id }
+  }  
   private static generateId (): string {
     return uuidv4()
-  }
+  } 
 
   private static validate ({ id, username, email, password }: any): void {
     const parsedSchema = UserSchema.safeParse({ id, username, email, password })
